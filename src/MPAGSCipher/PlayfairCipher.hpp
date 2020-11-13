@@ -37,6 +37,8 @@ public:
 private:
   /// The cipher key, essentially a constant shift to be applied
   std::string key_ = "";
+
+  const std::string alphabet_ {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 };
 
 #endif
