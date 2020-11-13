@@ -37,8 +37,16 @@ void PlayfairCipher::setKey( const std::string& key )
     key_.erase(iter2, key_.end());
   
   // Store the coords of each letter
-  
-  // Store the playfair cihper key map
+    for (std::string::size_type i{0}; i<25; ++i)
+      {
+	std::string::size_type columnNumber { i%5 };
+	std::string::size_type rowNumber { i/5 };
+	
+	auto coords = std::make_pair(rowNumber, columnNumber);
+	// Store the playfair cipher key map
+	Coord2CharMap_[coords] = key_[i];
+	Char2CoordMap_[key_[i]] = coords;
+      }
 }
 
 std::string PlayfairCipher::applyCipher( const std::string& inputText, const CipherMode cipherMode ) const

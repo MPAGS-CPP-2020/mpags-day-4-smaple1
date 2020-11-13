@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "CipherMode.hpp"
 
@@ -35,10 +36,15 @@ public:
   std::string applyCipher( const std::string& inputText, const CipherMode cipherMode ) const;
   
 private:
-  /// The cipher key, essentially a constant shift to be applied
+  /// The cipher key
   std::string key_ = "";
 
   const std::string alphabet_ {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+  /// A type to store the x-y coordinates in the 5x5 grid
+  using coordPair = std::pair<std::string::size_type, std::string::size_type>;
+
+  std::map<coordPair, char> Coord2CharMap_;
+  std::map<char, coordPair> Char2CoordMap_;
 };
 
 #endif
