@@ -26,6 +26,15 @@ void PlayfairCipher::setKey( const std::string& key )
 								       else {return x;}
 								     } );
   // Remove duplicated letters
+  std::string lettersEncountered {""};
+  auto iter2 = std::remove_if(key_.begin(), key_.end(), [&] (char x) {
+							  if (lettersEncountered.find(x) == std::string::npos )
+							    {lettersEncountered += x;
+							      return false;}
+							  else {return true;}
+							}
+    );
+    key_.erase(iter2, key_.end());
   
   // Store the coords of each letter
   
