@@ -51,20 +51,74 @@ void PlayfairCipher::setKey( const std::string& key )
 
 std::string PlayfairCipher::applyCipher( const std::string& inputText, const CipherMode cipherMode ) const
 {
-  if (cipherMode == CipherMode::Encrypt) {
-    std::cout << "key_ is " << key_ << std::endl;
-  }
+  std::string outputText = inputText;
   // Change J → I
-  
+  std::transform(std::begin(outputText), std::end(outputText), std::begin(outputText), [] (char x) {
+								       if ( x == 'J') {return 'I';}
+								       else {return x;}
+								     } );
   // If repeated chars in a digraph add an X or Q if XX
-  
+  // myString ABCDE -> size=5 -> myString[4]=E=myString[size-1]
+  std::string tempString {""};
+  for (std::string::size_type i=0; i<outputText.size(); i+=2)
+    {
+      tempString+=(outputText[i]);
+      if (i!=(outputText.size()-1))
+	{
+	  if (outputText[i+1] == outputText[i] && outputText[i] == 'X')
+	    {
+	      tempString+='Q';
+	    }
+	  else if (outputText[i+1] == outputText[i])
+	    {
+	      tempString+='X';
+	    }
+	  tempString+=(outputText[i+1]);
+	}
+      else
+	{
+	  break;
+	}
+
+    }
+  outputText.swap(tempString);
+
   // if the size of input is odd, add a trailing Z
-  
+  if (outputText.size()%2 == 1)
+    {
+      outputText.push_back('Z');
+    }
   // Loop over the input in Digraphs
+  for (std::string::size_type i=0; i<outputText.size(); i+=2)
+    {
+      // - Find the coords in the grid for each digraph
+      coordPair firstCoord {Char2CoordMap_.at(outputText[i])};
+      coordPair secondCoord {Char2CoordMap_.at(outputText[i+1])};
+
+      // - Apply the rules to these coords to get 'new' coords
+      int shift {1};
+      if (cipherMode == CipherMode::Decrypt)
+	{shift = -1;}
+      
+      if (firstCoord.first == secondCoord.first)
+	{
+	  firstCoord.second = (firstCoord.second+5+shift)%5;
+	  secondCoord.second = (secondCoord.second+5+shift)%5;
+	}
+      else if (firstCoord.second == secondCoord.second)
+	{
+	  firstCoord.first = (firstCoord.first+5+shift)%5;
+	  secondCoord.first = (secondCoord.first+5+shift)%5;
+	}
+      else
+	{
+	  std::swap(firstCoord.second, secondCoord.second);
+	}
+      // - Find the letter associated with the new coords
+      outputText[i] = Coord2CharMap_.at(firstCoord);
+      outputText[i+1] = Coord2CharMap_.at(secondCoord);
+    }
   
-  // - Find the coords in the grid for each digraph
-  // - Apply the rules to these coords to get 'new' coords
-  // - Find the letter associated with the new coords
   // return the text
-  return inputText;
+  return outputText;
 }

@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     case CipherType::Playfair :
       {
 	PlayfairCipher cipher { settings.cipherKey };
-	cipher.applyCipher( inputText, settings.cipherMode );
+	outputText = cipher.applyCipher( inputText, settings.cipherMode );
 	break;
       }
   }
